@@ -20,9 +20,9 @@ location: Lisbon, Portugal
 availability: Available for new opportunities
 
 # File names point inside the files/ folder next to this file.
-photo: photo.svg
+photo: photo.webp
 # Optional: which part of the photo stays inside the circle ("50% 20%" keeps the top).
-photoPosition: 50% 50%
+photoPosition: 50% 35%
 
 # Browser tab icon:
 #   initials            your initials on your accent color (the default)
