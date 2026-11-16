@@ -1,0 +1,74 @@
+# Your whole website comes from this file.
+# Edit the values, put your photo and CV in the files/ folder next to it, and run `npm run dev`.
+# Everything below is an invented example person.
+# To make your own: copy this folder to my-profile/ and edit the copy.
+
+# Page language. "he", "ar", "fa" and "ur" switch the layout to right-to-left.
+language: en
+
+# Optional: the address where your site will be published. Needed for link
+# previews with your photo when you share the site on LinkedIn, WhatsApp or Slack.
+# siteUrl: https://example.com
+
+name: Alex Morgan
+title: Full-stack developer building for the web
+# Optional: part of the title shown in the accent color.
+titleHighlight: for the web
+location: Lisbon, Portugal
+
+# Optional: a small badge above the title. Remove the line to hide it.
+availability: Available for new opportunities
+
+# File names point inside the files/ folder next to this file.
+photo: photo.webp
+# Optional: which part of the photo stays inside the circle ("50% 20%" keeps the top).
+photoPosition: 50% 35%
+
+# Browser tab icon:
+#   initials            your initials on your accent color (the default)
+#   "A"                 up to 3 characters or an emoji, same style
+#   icon.png            your own .svg, .png or .ico file in files/
+favicon: initials
+
+# One sentence shown under your name.
+pitch: I build web apps that are fast, accessible and easy to maintain.
+
+# Optional: shown as small pills under the intro.
+skills:
+  - TypeScript
+  - React
+  - Node.js
+  - PostgreSQL
+
+# Separate paragraphs with an empty line.
+about: |
+  I'm a full-stack developer with six years of experience building products with TypeScript, React and Node.js. I enjoy turning a vague idea into something people can actually use, and I care as much about the code that ships as about the person who uses it.
+
+  Lately I've been working on AI integrations: assistants that answer questions from a company's own documents, and tools that plug language models into existing workflows.
+
+  I'm open to full-time roles and freelance projects.
+
+cv:
+  file: cv.pdf
+
+# Email, LinkedIn and GitHub, all optional: remove any line you don't want.
+# With none of them, the contact section and the contact buttons disappear.
+contacts:
+  email: alex.morgan@example.com
+  linkedin: https://example.com/linkedin/alex-morgan
+  github: https://example.com/github/alex-morgan
+
+# Four hex colors. Dark mode is derived from them automatically.
+theme:
+  background: "#F8F6F1"   # page background
+  text: "#26372E"         # text and headings
+  accent: "#963454"       # buttons, links and highlights
+  soft: "#DCE3D0"         # badges, photo ring and the contact panel
+
+# Optional: change the words used on the page (for example to write it in another language).
+# labels:
+#   about: About me
+#   contact: Contact
+#   downloadCv: Download CV
+#   contactMe: Get in touch
+#   letsTalk: Let's talk

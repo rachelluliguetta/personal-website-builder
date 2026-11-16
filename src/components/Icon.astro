@@ -1,0 +1,32 @@
+---
+// Simple outline icons drawn for this project (24x24, stroke uses currentColor).
+interface Props {
+  name: 'mail' | 'linkedin' | 'github' | 'location' | 'download' | 'arrow';
+  class?: string;
+}
+
+const { name, class: className = 'size-5' } = Astro.props;
+
+const paths: Record<Props['name'], string> = {
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  linkedin:
+    '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/>',
+  github: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>',
+  location: '<path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12"/><circle cx="12" cy="9" r="2.5"/>',
+  download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  // Points to the end of the line; flipped with rtl:-scale-x-100 where used.
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+};
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={paths[name]}
+/>
