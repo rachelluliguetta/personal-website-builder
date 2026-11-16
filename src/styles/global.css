@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
+
+/*
+  The four --user-* colors come from profile.yaml (set on <html>).
+  Light mode uses them as they are; dark mode derives darker and lighter
+  versions from the same four, so every palette gets a dark mode for free.
+*/
+:root {
+  --bg: var(--user-background);
+  --ink: var(--user-text);
+  --accent-c: var(--user-accent);
+  --soft: var(--user-soft);
+  --on-accent: #ffffff;
+  --muted: color-mix(in oklab, var(--ink) 72%, var(--bg));
+  --line: color-mix(in oklab, var(--ink) 14%, var(--bg));
+  --card: color-mix(in oklab, var(--bg) 55%, #ffffff);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: color-mix(in oklab, var(--user-text) 55%, #000000);
+    --ink: var(--user-background);
+    --accent-c: color-mix(in oklab, var(--user-accent) 55%, #ffffff);
+    --soft: color-mix(in oklab, var(--user-soft) 16%, var(--bg));
+    --on-accent: var(--bg);
+    --card: color-mix(in oklab, var(--bg) 88%, #ffffff);
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-page: var(--bg);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent-c);
+  --color-soft: var(--soft);
+  --color-on-accent: var(--on-accent);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-card: var(--card);
+}
+
+html {
+  scroll-behavior: smooth;
+}

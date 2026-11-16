@@ -1,0 +1,232 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { loadProfile } from '../lib/profile';
+
+const profile = loadProfile();
+const { contacts, labels, theme } = profile;
+
+type ContactItem = {
+  icon: 'mail' | 'linkedin' | 'github';
+  label: string;
+  value: string;
+  href: string;
+  external: boolean;
+};
+
+// Shows a link without "https://" and without a trailing slash.
+const shortUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+
+const contactItems: ContactItem[] = [];
+if (contacts.email)
+  contactItems.push({ icon: 'mail', label: 'Email', value: contacts.email, href: `mailto:${contacts.email}`, external: false });
+if (contacts.linkedin)
+  contactItems.push({ icon: 'linkedin', label: 'LinkedIn', value: shortUrl(contacts.linkedin), href: contacts.linkedin, external: true });
+if (contacts.github)
+  contactItems.push({ icon: 'github', label: 'GitHub', value: shortUrl(contacts.github), href: contacts.github, external: true });
+
+// Title split around the highlighted words, if any.
+const [titleBefore, titleAfter] = profile.titleHighlight
+  ? [
+      profile.title.slice(0, profile.title.indexOf(profile.titleHighlight)),
+      profile.title.slice(profile.title.indexOf(profile.titleHighlight) + profile.titleHighlight.length),
+    ]
+  : [profile.title, ''];
+
+// Link previews need absolute URLs, so they are only added when siteUrl is set.
+const pageUrl = profile.siteUrl ? new URL('/', profile.siteUrl).href : undefined;
+const previewImage = profile.photo && pageUrl ? new URL(profile.photo, pageUrl).href : undefined;
+
+const letsTalkHref = contacts.email ? `mailto:${contacts.email}` : '#contact';
+const description = profile.pitch ?? `${profile.name}, ${profile.title}`;
+const themeStyle = [
+  `--user-background: ${theme.background}`,
+  `--user-text: ${theme.text}`,
+  `--user-accent: ${theme.accent}`,
+  `--user-soft: ${theme.soft}`,
+].join('; ');
+
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';
+---
+
+<!doctype html>
+<html lang={profile.language} dir={profile.dir} style={themeStyle}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{profile.name} | {profile.title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={theme.background} />
+    {
+      profile.faviconInfo.kind === 'file' ? (
+        <link rel="icon" href={profile.faviconInfo.href} type={profile.faviconInfo.type} />
+      ) : (
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      )
+    }
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={`${profile.name} | ${profile.title}`} />
+    <meta property="og:description" content={description} />
+    {pageUrl && <link rel="canonical" href={pageUrl} />}
+    {pageUrl && <meta property="og:url" content={pageUrl} />}
+    {previewImage && <meta property="og:image" content={previewImage} />}
+  </head>
+  <body class="bg-page font-sans text-ink antialiased">
+    <!-- Top bar -->
+    <header class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-6 sm:px-8">
+      <a href="#top" class={`text-xl font-medium tracking-tight sm:text-2xl ${focusRing} rounded`}>{profile.name}</a>
+      <nav aria-label="Main" class="flex items-center gap-6 text-[15px] font-medium sm:gap-8">
+        <a href="#about" class={`hidden rounded transition hover:text-accent sm:inline ${focusRing}`}>{labels.about}</a>
+        {
+          contactItems.length > 0 && (
+            <a href="#contact" class={`hidden rounded transition hover:text-accent sm:inline ${focusRing}`}>
+              {labels.contact}
+            </a>
+          )
+        }
+        {
+          contactItems.length > 0 && (
+            <a
+              href={letsTalkHref}
+              class={`inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-on-accent transition hover:opacity-90 ${focusRing}`}
+            >
+              {labels.letsTalk}
+              <Icon name="arrow" class="size-4 rtl:-scale-x-100" />
+            </a>
+          )
+        }
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- Intro -->
+      <section class="mx-auto grid max-w-6xl items-center gap-12 px-5 pt-8 pb-20 sm:px-8 md:grid-cols-[1.25fr_1fr] md:pt-16">
+        <div class="order-2 md:order-1">
+          {
+            profile.availability && (
+              <p class="inline-flex items-center gap-2.5 rounded-full bg-soft px-4 py-2 text-xs font-semibold tracking-wider uppercase">
+                <span class="size-2.5 rounded-full bg-emerald-600" aria-hidden="true" />
+                {profile.availability}
+              </p>
+            )
+          }
+          <h1 class="mt-6 text-4xl leading-[1.08] font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+            <span class="sr-only">{profile.name}, </span>
+            {titleBefore}
+            {profile.titleHighlight && <span class="text-accent">{profile.titleHighlight}</span>}
+            {titleAfter}
+          </h1>
+          {
+            profile.location && (
+              <p class="mt-4 inline-flex items-center gap-1.5 text-sm text-muted">
+                <Icon name="location" class="size-4" />
+                {profile.location}
+              </p>
+            )
+          }
+          {profile.pitch && <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted sm:text-xl">{profile.pitch}</p>}
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            {
+              profile.cv && (
+                <a
+                  href={profile.cv.file}
+                  download
+                  class={`inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-on-accent shadow-sm transition hover:opacity-90 ${focusRing}`}
+                >
+                  <Icon name="download" class="size-4" />
+                  {labels.downloadCv}
+                </a>
+              )
+            }
+            {
+              contactItems.length > 0 && (
+                <a
+                  href="#contact"
+                  class={`inline-flex items-center rounded-full border border-ink/70 px-6 py-3 font-semibold transition hover:border-accent hover:text-accent ${focusRing}`}
+                >
+                  {labels.contactMe}
+                </a>
+              )
+            }
+          </div>
+
+          {
+            profile.skills.length > 0 && (
+              <ul class="mt-8 flex flex-wrap gap-2" aria-label="Skills">
+                {profile.skills.map((skill) => (
+                  <li class="rounded-full border border-line bg-card px-4 py-1.5 text-sm">{skill}</li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+
+        {
+          profile.photo && (
+            <div class="order-1 flex justify-center md:order-2 md:justify-end">
+              <img
+                src={profile.photo}
+                alt={profile.name}
+                width="420"
+                height="420"
+                style={`object-position: ${profile.photoPosition}`}
+                class="aspect-square w-60 rounded-full object-cover ring-[10px] ring-soft sm:w-72 md:w-full md:max-w-[420px]"
+              />
+            </div>
+          )
+        }
+      </section>
+
+      <!-- About -->
+      <section id="about" aria-labelledby="about-title" class="mx-auto max-w-6xl scroll-mt-6 px-5 py-16 sm:px-8">
+        <div class="grid gap-8 md:grid-cols-[1fr_2fr]">
+          <h2 id="about-title" class="flex items-center gap-5 self-start text-3xl font-semibold tracking-tight sm:text-4xl">
+            <span class="h-0.5 w-10 shrink-0 bg-accent" aria-hidden="true"></span>
+            {labels.about}
+          </h2>
+          <div class="space-y-5 text-lg leading-relaxed text-muted">
+            {profile.aboutParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      {
+        contactItems.length > 0 && (
+          <section id="contact" aria-labelledby="contact-title" class="mx-auto max-w-6xl scroll-mt-6 px-5 pt-8 pb-20 sm:px-8">
+            <div class="rounded-3xl bg-soft p-6 sm:p-10 md:p-12">
+              <h2 id="contact-title" class="flex items-center gap-5 text-3xl font-semibold tracking-tight sm:text-4xl">
+                <span class="h-0.5 w-10 shrink-0 bg-accent" aria-hidden="true" />
+                {labels.contact}
+              </h2>
+              <ul class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {contactItems.map((item) => (
+                  <li>
+                    <a
+                      href={item.href}
+                      {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      class={`group flex items-center gap-4 rounded-2xl bg-card p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${focusRing}`}
+                    >
+                      <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-soft text-accent transition group-hover:bg-accent group-hover:text-on-accent">
+                        <Icon name={item.icon} />
+                      </span>
+                      <span class="min-w-0">
+                        <span class="block text-xs font-medium text-muted">{item.label}</span>
+                        <span class="block truncate font-semibold">
+                          <bdi>{item.value}</bdi>
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )
+      }
+    </main>
+
+    <footer class="pb-10 text-center text-xs text-muted">Made with personal-website-builder</footer>
+  </body>
+</html>
